@@ -19,15 +19,41 @@
 package net.terryyiu.emailservice.core;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.collect.ImmutableList;
 
+/**
+ * Email message containing the subject, message, sender,
+ * recipients, and any other pertaining information.
+ */
 public class Email {
+	/**
+	 * Subject of the email.
+	 */
 	private String subject;
+	
+	/**
+	 * Plain text format of the email message.
+	 */
 	private String message;
+	
+	/**
+	 * Sender contact information.
+	 */
 	private Contact from;
-	private ImmutableList<Contact> to;
-	private ImmutableList<Contact> cc;
-	private ImmutableList<Contact> bcc;
+	
+	/**
+	 * List of contacts for direct recipients of this email.
+	 */
+	private Contact[] to;
+	
+	/**
+	 * List of contacts for carbon copy recipients of this email.
+	 */
+	private Contact[] cc;
+	
+	/**
+	 * List of contacts for blind carbon copy recipients of this email.
+	 */
+	private Contact[] bcc;
 	
 	public Email() {
 		// Jackson deserialization
@@ -37,9 +63,9 @@ public class Email {
 			String subject, 
 			String message, 
 			Contact from, 
-			ImmutableList<Contact> to,
-			ImmutableList<Contact> cc,
-			ImmutableList<Contact> bcc) {
+			Contact[] to,
+			Contact[] cc,
+			Contact[] bcc) {
 		this.subject = subject;
 		this.message = message;
 		this.from = from;
@@ -64,17 +90,17 @@ public class Email {
 	}
 	
 	@JsonProperty
-	public ImmutableList<Contact> getTo() {
+	public Contact[] getTo() {
 		return to;
 	}
 	
 	@JsonProperty
-	public ImmutableList<Contact> getCc() {
+	public Contact[] getCc() {
 		return cc;
 	}
 	
 	@JsonProperty
-	public ImmutableList<Contact> getBcc() {
+	public Contact[] getBcc() {
 		return bcc;
 	}
 }

@@ -18,14 +18,77 @@
 
 package net.terryyiu.emailservice.providers;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import net.terryyiu.emailservice.core.Contact;
 import net.terryyiu.emailservice.core.Email;
 
-public class MandrillEmailServiceProvider implements EmailServiceProvider {
+/**
+ * This service provider sends email through Mandrill.
+ */
+public class MandrillEmailServiceProvider extends AbstractEmailServiceProvider {
+
+	/**
+	 * Mandrill's RESTful endpoint that handles sending emails.
+	 */
+	private static final String SERVICE_URL = "https://mandrillapp.com/api/1.0/messages/send.json";
+	
+	/**
+	 * API key to send emails through Mandrill.
+	 * TODO Move api key into a config file.
+	 */
+	private static final String API_KEY = "MandrillApiKey";
 
 	@Override
-	public boolean send(Email email) {
-		// TODO Auto-generated method stub
-		return false;
+	protected Map<String, Object> getRequestPostData(Email email) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("key", API_KEY);
+		
+		Map<String, Object> messageMap = new HashMap<String, Object>();
+		Contact[] toContacts = email.getTo();
+		Contact[] ccContacts = email.getCc();
+		Contact[] bccContacts = email.getBcc();
+		int toLength = (toContacts == null) ? 0 : toContacts.length;
+		int ccLength = (ccContacts == null) ? 0 : ccContacts.length;
+		int bccLength = (bccContacts == null) ? 0 : bccContacts.length;
+		
+		MandrillRecipient[] recipients = new MandrillRecipient[toLength + ccLength + bccLength];
+		int count = 0;
+		
+		// TODO Refactor the following code.
+		for (int i = 0; i < toLength; ++i) {
+			Contact contact = toContacts[i];
+			recipients[count++] = new MandrillRecipient(contact.getEmailAddress(), contact.getName(), "to");
+		}
+		for (int i = 0; i < ccLength; ++i) {
+			Contact contact = ccContacts[i];
+			recipients[count++] = new MandrillRecipient(contact.getEmailAddress(), contact.getName(), "cc");
+		}
+		for (int i = 0; i < bccLength; ++i) {
+			Contact contact = bccContacts[i];
+			recipients[count++] = new MandrillRecipient(contact.getEmailAddress(), contact.getName(), "bcc");
+		}
+		
+		messageMap.put("to", recipients);
+		map.put("message", messageMap);
+		
+		map.put("subject", email.getSubject());
+		map.put("text", email.getMessage());
+		map.put("from_email", email.getFrom().getEmailAddress());
+		map.put("from_name", email.getFrom().getName());
+		
+		return map;
+	}
+	
+	@Override
+	protected String getServiceUrl() {
+		return SERVICE_URL;
+	}
+	
+	@Override
+	public String toString() {
+		return "Mandrill";
 	}
 
 }

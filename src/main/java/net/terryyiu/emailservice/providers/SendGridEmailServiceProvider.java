@@ -18,46 +18,40 @@
 
 package net.terryyiu.emailservice.providers;
 
-import java.net.HttpURLConnection;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.sun.jersey.core.util.Base64;
 
 import net.terryyiu.emailservice.core.Email;
 import net.terryyiu.emailservice.util.EmailUtil;
 
-public class MailgunEmailServiceProvider extends AbstractEmailServiceProvider {
-
-	private static final String SERVICE_URL = "https://api.mailgun.net/v2/sandbox1450d16db62f4dbba21c8f961f7c013e.mailgun.org/messages";
+public class SendGridEmailServiceProvider extends AbstractEmailServiceProvider {
 	
-	/**
-	 * API key to send emails through Mailgun.
-	 * TODO Move api key into a config file.
-	 */
-	private static final String API_KEY = "api:MailgunApiKey";
+	private static final String SERVICE_URL = "https://api.sendgrid.com/api/mail.send.json";
 
 	@Override
 	protected Map<String, Object> getRequestPostData(Email email) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		
-		// Create String for comma delimited recipient names and email addresses.
-		EmailUtil.addToMapIfNotNull(map, "to", EmailUtil.getCommaDelimitedEmailAddresses(email.getTo()));
-		EmailUtil.addToMapIfNotNull(map, "cc", EmailUtil.getCommaDelimitedEmailAddresses(email.getCc()));
-		EmailUtil.addToMapIfNotNull(map, "bcc", EmailUtil.getCommaDelimitedEmailAddresses(email.getBcc()));
+		// Create two String arrays for storing direct recipient
+		// email addresses and contact names.
+		EmailUtil.addToMapIfNotNull(map, "toname", EmailUtil.getNames(email.getTo()));
+		EmailUtil.addToMapIfNotNull(map, "to", EmailUtil.getEmailAddresses(email.getTo()));
+		
+		// Create a String array for storing carbon copy recipient
+		// email addresses.
+		EmailUtil.addToMapIfNotNull(map, "cc", EmailUtil.getEmailAddresses(email.getCc()));
+		
+		// Create a String array for storing blind carbon copy recipient
+		// email addresses.
+		EmailUtil.addToMapIfNotNull(map, "bcc", EmailUtil.getEmailAddresses(email.getBcc()));
 		
 		map.put("subject", email.getSubject());
 		map.put("text", email.getMessage());
-		map.put("from", email.getFrom().toString());
+		
+		map.put("from", email.getFrom().getEmailAddress());
+		map.put("fromname", email.getFrom().getName());
 		
 		return map;
-	}
-	
-	@Override
-	protected void modifyConnection(HttpURLConnection connection) {
-		byte[] authBytes = Base64.encode(API_KEY);
-		String authString = new String(authBytes);
-		connection.setRequestProperty("Authorization", "Basic " + authString);
 	}
 	
 	@Override
@@ -67,7 +61,7 @@ public class MailgunEmailServiceProvider extends AbstractEmailServiceProvider {
 	
 	@Override
 	public String toString() {
-		return "Mailgun";
+		return "SendGrid";
 	}
-
+	
 }

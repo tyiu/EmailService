@@ -23,6 +23,10 @@ import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 
+/**
+ * This application acts as a proxy email service, which forwards requests for
+ * sending emails to other email service providers.
+ */
 public class EmailServiceApplication extends Application<EmailServiceConfiguration> {
 	
 	public static void main(String[] args) throws Exception {
@@ -31,8 +35,7 @@ public class EmailServiceApplication extends Application<EmailServiceConfigurati
 
 	@Override
 	public void initialize(Bootstrap<EmailServiceConfiguration> bootstrap) {
-		// TODO Auto-generated method stub
-		
+		// No-op
 	}
 
 	@Override
@@ -40,6 +43,8 @@ public class EmailServiceApplication extends Application<EmailServiceConfigurati
 			Environment environment) throws Exception {
 		final SendEmailResource resource = new SendEmailResource();
 		environment.jersey().register(resource);
+		
+		// TODO Register health checks that ensure the service is running healthy.
 	}
 
 }

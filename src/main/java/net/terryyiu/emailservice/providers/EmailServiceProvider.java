@@ -18,10 +18,21 @@
 
 package net.terryyiu.emailservice.providers;
 
+import java.io.IOException;
+
 import net.terryyiu.emailservice.core.Email;
 
+/**
+ * Defines an email service provider that email send requests can be forwarded to.
+ */
 public interface EmailServiceProvider {
 
-	boolean send(Email email);
+	/**
+	 * Sends an email through this email service provider.
+	 * @param email the email to send
+	 * @return true if the email was sent successfully, false otherwise.
+	 * @throws IOException thrown if the email could not be sent
+	 */
+	boolean send(Email email) throws IOException;
 	
 }
