@@ -7,6 +7,7 @@ Tech Stack
 ==========
 
 Java 8
+
 Dropwizard - https://dropwizard.github.io/dropwizard/
 
 Dropwizard includes the following:
@@ -14,11 +15,21 @@ Dropwizard includes the following:
 * Jersey for REST
 * Jackson for JSON
 
+Maven for packaging
+
 Why Dropwizard?
 ===============
 
 Dropwizard compiles powerful and widely used Java libraries used for developing RESTful web services.
+
 They are well documented and I have some experience with them from working on previous Java web services.
+
+How to Deploy
+=============
+
+* Checkout source code
+* Type: mvn package
+* Type: java -jar target/emailservice-0.0.1-SNAPSHOT.jar server email-config.yml
 
 /email/send Endpoint
 ====================
